@@ -80,12 +80,10 @@ Timer.setMiliseconds=function(passedMiliseconds){
   else
   {
 
-         return "Timer already started";
+    return "Timer already started";
   }
 
  };
-
-
 
  Timer.forcedStop=function(){
   timerAlreadyStarted=false;
