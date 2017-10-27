@@ -1,4 +1,4 @@
-var Timer=function(){
+var Timer=function(pmiliseconds){
 
    if(typeof pmiliseconds==="undefined")
       pmiliseconds=0;
@@ -20,6 +20,8 @@ miliseconds=pmiliseconds;
 Timer.setMiliseconds=function(passedMiliseconds){
      if(timerAlreadyStarted===false)
         miliseconds=passedMiliseconds;
+
+
  }
 
  Timer.setVue=function(vue)
@@ -58,10 +60,16 @@ Timer.setMiliseconds=function(passedMiliseconds){
     }
     var k=1000*60;
     var milisecondsToMinutes=miliseconds/k;
+    var milisecondsToSeconds=miliseconds/1000;
+    var timeLimit;
     if(milisecondsToMinutes<1){
-      milisecondsToMinutes="00";
+      timeLimit=milisecondsToSeconds<10?"00:"+"0"+milisecondsToSeconds:"00:"+milisecondsToSeconds;
+    }
+  else{
+      milisecondsToMinutes=milisecondsToMinutes<10?"0"+milisecondsToMinutes:milisecondsToMinutes;
+      timeLimit=milisecondsToMinutes+":00";
   }
-    var output=minutesAAfficher+":"+seconds+" / "+milisecondsToMinutes+":00";
+    var output=minutesAAfficher+":"+seconds+" / "+timeLimit;
     if(myVue)myVue.update(output);
 
     console.log(output);
@@ -80,7 +88,7 @@ Timer.setMiliseconds=function(passedMiliseconds){
   else
   {
 
-    return "Timer already started";
+    console.log("Timer already started");
   }
 
  };
