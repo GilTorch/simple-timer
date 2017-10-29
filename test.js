@@ -3,5 +3,5 @@ if(process.argv[2]==="" || typeof process.argv[2]==="undefined" || typeof proces
   console.log("You should pass miliseconds to test the project");
 else {
   timer.setMiliseconds(process.argv[2]);
-  timer.startTimer();
+  timer.start();
 }

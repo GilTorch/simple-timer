@@ -1,111 +1,151 @@
+
+
 var Timer=function(pmiliseconds){
 
-   if(typeof pmiliseconds==="undefined")
-      pmiliseconds=0;
-miliseconds=pmiliseconds;
- };
-
- var myVue;
-
- var miliseconds;
-
- var minutes=0;
-
- var seconds=0;
-
- var intervalHandler;
- var timeoutHandler;
-
- var timerAlreadyStarted=false;
-Timer.setMiliseconds=function(passedMiliseconds){
-     if(timerAlreadyStarted===false)
-        miliseconds=passedMiliseconds;
+  if(isNaN(parseInt(pmiliseconds)))
+  {
+    Timer.setMiliseconds(0);
+  }
+  else{
+    pmiliseconds=parseInt(pmiliseconds);
+    Timer.setMiliseconds(pmiliseconds);
+  }
 
 
- }
+};
 
- Timer.setVue=function(vue)
+var myVue;
+
+  var miliseconds;
+  var remainingMiliseconds;
+  var minutes=0;
+  var seconds=0;
+  var pausedMinutes=0;
+  var pausedSeconds=0;
+  var pausedTimeLimit=0;
+  var timeLimit;
+
+  var intervalHandler;
+  var timeoutHandler;
+  var timerPaused=false;
+  var timerAlreadyStarted=false;
+  var TimerObject=this;
+
+
+  Timer.setMiliseconds=function(passedMiliseconds){
+
+    if(timerAlreadyStarted===false)
+    {
+      miliseconds=passedMiliseconds;
+      remainingMiliseconds=miliseconds;
+
+      //La mwen fomate affichage time limit la
+      var k=1000*60;
+      var milisecondsToMinutes=miliseconds/k;
+      var milisecondsToSeconds=miliseconds/1000;
+
+      if(milisecondsToMinutes<1){
+        timeLimit=milisecondsToSeconds<10?"00:"+"0"+milisecondsToSeconds:"00:"+milisecondsToSeconds;
+      }
+      else{
+        milisecondsToMinutes=milisecondsToMinutes<10?"0"+milisecondsToMinutes:milisecondsToMinutes;
+        timeLimit=milisecondsToMinutes+":00";
+      }
+    }
+
+  }
+
+
+
+  Timer.setVue=function(vue)
   {
     myVue=vue;
   };
 
- function stopTimer(){
-  timerAlreadyStarted=false;
-  minutes=0;
-  seconds=0;
-  clearInterval(intervalHandler);
-  clearInterval(timeoutHandler);
- };
-
-
+  Timer.stop=function(){
+    if(timerAlreadyStarted)
+    {
+      timerAlreadyStarted=false;
+      minutes=0;
+      seconds=0;
+      clearInterval(intervalHandler);
+      clearInterval(timeoutHandler);
+      console.log("timer stopped!");
+    }
+    else{
+      if(timerPaused)
+         console.log("Timer already paused");
+      else
+         console.log("Timer not yet started. So It cannot be stopped :)");
+    }
+  }
 
   function outputTime(){
+    remainingMiliseconds-=1000;
     var minutesAAfficher="00";
     seconds++;
-    if(seconds>0 && seconds%60===0)
-      {
-        seconds=0;
-        minutes++;
-      }
+    if(seconds>=60 && seconds%60===0)
+    {
+      seconds=0;
+      minutes++;
+    }
 
     if(seconds<10)
-      seconds="0"+seconds;
+    seconds="0"+seconds;
 
-   if(minutes<10)
-   {
+    if(minutes<10)
+    {
       minutesAAfficher="0"+minutes;
     }
     else{
       minutesAAfficher=minutes;
     }
-    var k=1000*60;
-    var milisecondsToMinutes=miliseconds/k;
-    var milisecondsToSeconds=miliseconds/1000;
-    var timeLimit;
-    if(milisecondsToMinutes<1){
-      timeLimit=milisecondsToSeconds<10?"00:"+"0"+milisecondsToSeconds:"00:"+milisecondsToSeconds;
-    }
-  else{
-      milisecondsToMinutes=milisecondsToMinutes<10?"0"+milisecondsToMinutes:milisecondsToMinutes;
-      timeLimit=milisecondsToMinutes+":00";
-  }
+
     var output=minutesAAfficher+":"+seconds+" / "+timeLimit;
-    if(myVue)myVue.update(output);
+    if(myVue)myVue.innerHTML=output;
 
     console.log(output);
   }
 
-
- Timer.startTimer=function(){
-
- if(timerAlreadyStarted===false)
-  {
-      timerAlreadyStarted=true;
-      this.timerEnds=false;
+  Timer.start=function(){
+    if(timerAlreadyStarted===false)
+    {
+      if(timerPaused===true)
+      {
+        miliseconds=remainingMiliseconds;
+        minutes=pausedMinutes;
+        seconds=pausedSeconds;
+        timeLimit=pausedTimeLimit;
+      }
       intervalHandler=setInterval(outputTime,1000);
-      timeoutHandler=setTimeout(stopTimer,miliseconds);
-  }
-  else
-  {
+      timeoutHandler=setTimeout(Timer.stop,miliseconds);
+      timerPaused=false;
+      timerAlreadyStarted=true;
+    }
+    else{
+      console.log("Timer already started. Wait for timer to finish or stop timer");
+    }
 
-    console.log("Timer already started");
-  }
-
- };
-
- Timer.forcedStop=function(){
-  timerAlreadyStarted=false;
-  minutes=0;
-  seconds=0;
-  clearInterval(intervalHandler);
-  clearInterval(timeoutHandler);
- };
+  };
 
 
+  Timer.pause=function(){
+    if(timerAlreadyStarted)
+    {
+      pausedSeconds=eval(seconds);
+      pausedMinutes=eval(minutes);
+      pausedTimeLimit=timeLimit;
+      timerPaused=true;
+      console.log("Timer paused at:"+pausedSeconds+" seconds");
+      console.log("Timer paused at:"+pausedMinutes+" minutes");
+      Timer.stop();
+    }
+    else
+    {
+      console.log("Timer is not yet started. Can't pause.");
+    }
 
- Timer.resetTimer=function(){
-  this.forcedStop();
-  this.startTimer();
- };
+  };
 
- module.exports=Timer;
+
+module.exports=Timer;
