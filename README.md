@@ -1,7 +1,7 @@
-#Simple Timer
+# Simple Timer
 simple-timer is a basic, easy-to-use timer for your projects.
 
-#Installation
+# Installation
 
 Install your timer via npm
 
@@ -14,7 +14,7 @@ or you can also call the timer in a script tag:
 ```bash
 <script src="https://cdn.rawgit.com/GilTorch/simple-timer/master/simple-timer-client/js/index_production.js"></script>
 ```
-#Example
+# Example
 After installation, you can then call your timer like so:
 ```bash
 var timer=new Timer();
@@ -24,7 +24,7 @@ var ouput=document.getElementById("timer-output");//output can be a paragraph ht
 timer.setVue(ouput);
 ```
 
-#License
+# License
 [MIT](https://codepen.io/BlessedCamper/full/JOdWEL/)
 
 
